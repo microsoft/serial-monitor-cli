@@ -1,11 +1,7 @@
 # Serial Monitor Cli
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
-
 As the maintainer of this project, please make a few updates:
 
-- Improving this README.MD file to provide a great experience
 - Updating SUPPORT.MD with content about this project's support experience
 - Understanding the security reporting process in SECURITY.MD
 - Remove this section from the README
@@ -24,8 +20,20 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
+### Setting Up Dev Environment
+
+- Create Python 3.8 Virtual Environment
+	```cmd
+	python -m venv ./.venv
+	```
+- Activate environment and install dependecies
+	```cmd
+	.venv\Script\Activate
+	pip install -r requirements.txt
+	```
+
 ### Dev Dependecies
-- `pip install pyserial pyinstaller`
+
 - A device that can connect to a serial port (e.g. Arduino Uno)
 - Sample Arduino Code for test device:
     ```C++
@@ -42,6 +50,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
     }
     ```
 ### Setting up the debugger
+
 1. Connect your test device to you computer
 1. Run `python main.py --list-ports` to find which port your device is connected to
 1. Open `launch.json` in `.vscode`
@@ -50,6 +59,9 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 1. Press F5 to start debugging
 
 ### Building the Code
+```cmd
+pyinstaller .\src\main.py --onefile
+```
 
 ## Trademarks
 
