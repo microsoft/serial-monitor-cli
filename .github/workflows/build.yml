@@ -18,8 +18,6 @@ jobs:
     environment: build
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
     steps:
-    - run: echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-    - run: echo ${{env.VERSION}}
     - uses: actions/checkout@v2
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
@@ -39,7 +37,7 @@ jobs:
     - name: Build
       run: |
         pyinstaller src/main.py --onefile
-    - name: upload .vsix to github tag
+    - name: upload executable to github tag
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.OAUTH_TOKEN }}
