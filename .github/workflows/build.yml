@@ -21,10 +21,11 @@ jobs:
     environment: build
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
     steps:
+    - echo: ${{ matrix.os }}
     - uses: actions/checkout@v2
     - name: Set up Python 3.8 x86
       uses: actions/setup-python@v2
-      if: ${{ matrix.os == windows-latest }} 
+      if: ${{ matrix.os }} == windows-latest 
       with:
         python-version: 3.8
         architecture: 'x86'
