@@ -21,7 +21,8 @@ jobs:
     environment: build
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
     steps:
-    - echo: ${{ matrix.os }}
+    - name: echo matrix
+      run: echo "${{ matrix.os }}"
     - uses: actions/checkout@v2
     - name: Set up Python 3.8 x86
       uses: actions/setup-python@v2
