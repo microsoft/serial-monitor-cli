@@ -23,13 +23,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.8 x86
+      if: ${{ matrix.os }} == windows-latest
       uses: actions/setup-python@v2
       with:
         python-version: 3.8
         architecture: 'x86'
-      continue-on-error: true
     - name: Set up Python 3.8 x64
-      if: ${{ failure() }}
       uses: actions/setup-python@v2
       with:
         python-version: 3.8
