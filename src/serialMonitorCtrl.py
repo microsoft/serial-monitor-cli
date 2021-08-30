@@ -9,6 +9,7 @@ class SerialMonitor:
     def __init__(self, port, baud):
         self._port = port
         self._baud = baud
+        self._commands = None
 
     def open(self):
         """Open serial port"""
@@ -38,6 +39,9 @@ class SerialMonitor:
 
     def isOpen(self) -> bool:
         return(self._serial.isOpen())
+
+    def setRts(self, state: bool) -> None:
+        self._serial.rts = state
 
     @staticmethod
     def get_port_list() -> list:

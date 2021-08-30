@@ -3,6 +3,7 @@ import argparse
 import dataHandler as dataHandler
 import threading
 import queue
+from commands import CommandInvoker
 
 parser = argparse.ArgumentParser()
 
@@ -41,6 +42,7 @@ if args.func == 'list-ports':
     dataHandler.print_to_console(SerialMonitor.get_port_list_json())
 elif args.func == 'open':
     device_connection = SerialMonitor(args.port, args.baud)
+    invoker = CommandInvoker(device_connection)
     device_connection.open()
     user_input_thread = create_user_input_thread(user_input_queue)
     device_connection_thread = create_device_connection_thread()
@@ -53,8 +55,9 @@ elif args.func == 'open':
                 user_input = user_input_queue.get()
                 if args.json is True:
                     decoded_input = user_input.decode('utf-8').strip()
-                    dataHandler.process_external_command(decoded_input,
-                                                         device_connection)
+                    invoker.process_external_command(decoded_input)
+                    # dataHandler.process_external_command(decoded_input,
+                    #                                      device_connection)
                 else:
                     dataHandler.print_to_console(user_input)
 
