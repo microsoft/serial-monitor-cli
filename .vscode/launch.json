@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "src/main.py",
-            "args": ["open", "COM5", "-b 9600", "-j"],
+            "args": ["open", "COM4", "-b 9600", "-j"],
             "console": "integratedTerminal"
         }
     ]

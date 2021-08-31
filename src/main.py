@@ -10,12 +10,22 @@ parser = argparse.ArgumentParser()
 
 subparser = parser.add_subparsers(dest='func')
 
-ports_parser = subparser.add_parser('list-ports')
+ports_parser = subparser.add_parser('list-ports',
+                                    help='List all avialble serial ports')
 
-ser_parser = subparser.add_parser('open')
-ser_parser.add_argument('port', type=str)
-ser_parser.add_argument('-b', '--baud', type=int)
-ser_parser.add_argument('-j', '--json', action='store_true')
+ser_parser = subparser.add_parser('open',
+                                  help='Open a new serial connection')
+ser_parser.add_argument('port', type=str,
+                        help='The port name to open. '
+                        'Hint: Use list-ports to see avialable ports')
+ser_parser.add_argument('-b', '--baud', type=int, metavar='9600',
+                        help='The baud rate for the connection')
+ser_parser.add_argument('-r', '--rtscts', action='store_true',
+                        help='Set RTS/CTS to true')
+ser_parser.add_argument('-d', '--dsrdtr', action='store_true',
+                        help='Set DSR/DTR to true')
+ser_parser.add_argument('-j', '--json', action='store_true',
+                        help='Set input and output to json mode')
 
 args = parser.parse_args()
 
@@ -42,7 +52,10 @@ user_input_queue = queue.Queue()
 if args.func == 'list-ports':
     dataHandler.print_to_console(SerialMonitor.get_port_list_json())
 elif args.func == 'open':
-    device_connection = SerialMonitor(args.port, args.baud)
+    device_connection = SerialMonitor(args.port,
+                                      args.baud,
+                                      args.rtscts,
+                                      args.dsrdtr)
     invoker = CommandInvoker(device_connection)
     invoker.registerCommand('rtsOn', rtsOn(device_connection))
     invoker.registerCommand('rtsOff', rtsOff(device_connection))
