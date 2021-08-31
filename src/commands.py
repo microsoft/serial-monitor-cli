@@ -3,50 +3,66 @@ import json
 
 
 class Command:
-    def __init__(self, cmd, serial: SerialMonitor, setting=None):
-        self._command = cmd
-        self._serial = serial
-        self._setting = setting
-
     def execute():
         pass
 
 
 class rtsOn(Command):
+    def __init__(self, serial: SerialMonitor):
+        self._serial = serial
+
     def execute(self):
-        print("executed")
-        self._serial.rts(True)
-        pass
+        self._serial.setRts(True)
 
 
 class rtsOff(Command):
-    def execute():
-        pass
+    def __init__(self, serial: SerialMonitor):
+        self._serial = serial
+
+    def execute(self):
+        self._serial.setRts(False)
+
+
+class dtrOn(Command):
+    def __init__(self, serial: SerialMonitor):
+        self._serial = serial
+
+    def execute(self):
+        self._serial.setDtr(True)
+
+
+class dtrOff(Command):
+    def __init__(self, serial: SerialMonitor):
+        self._serial = serial
+
+    def execute(self):
+        self._serial.setDtr(False)
 
 
 class close(Command):
-    def execute():
-        pass
+    def __init__(self, serial: SerialMonitor):
+        self._serial = serial
+
+    def execute(self):
+        self._serial.close()
 
 
 class CommandInvoker:
-    # List of commands for input validation
-    _commands = ['close',
-                 'rtsOn',
-                 'rtsOff',
-                 'write']
-
     def __init__(self, serial: SerialMonitor):
         self._ser = serial
+        self._commands = {}
+
+    def registerCommand(self, command_name: str, command: Command):
+        self._commands[command_name] = command
 
     def set_command(self, command: str) -> bool:
         try:
-            self._commands.index(command)
+            self._commands[command]
         except ValueError:
             print("Invalid Command")
             return
 
-        self._next_command = eval(command)
+        self._next_command = self._commands[command]
 
     def executeCommand(self):
         self._next_command.execute()

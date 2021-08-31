@@ -6,15 +6,20 @@ import json
 
 class SerialMonitor:
 
-    def __init__(self, port, baud):
+    def __init__(self, port, baud, rts=False, dtr=True):
         self._port = port
         self._baud = baud
+        self._rts = rts
+        self._dtr = dtr
         self._commands = None
 
     def open(self):
         """Open serial port"""
         try:
-            self._serial = serial.Serial(self._port, self._baud)
+            self._serial = serial.Serial(self._port,
+                                         self._baud,
+                                         rtscts=self._rts,
+                                         dsrdtr=self._rts)
         except SerialException:
             print(f'No device found at port {self._port}')
             raise SystemExit
@@ -42,6 +47,9 @@ class SerialMonitor:
 
     def setRts(self, state: bool) -> None:
         self._serial.rts = state
+
+    def setDtr(self, state: bool) -> None:
+        self._serial.dtr = state
 
     @staticmethod
     def get_port_list() -> list:

@@ -3,7 +3,8 @@ import argparse
 import dataHandler as dataHandler
 import threading
 import queue
-from commands import CommandInvoker
+from commands import CommandInvoker, dtrOff, dtrOn, rtsOff, rtsOn
+
 
 parser = argparse.ArgumentParser()
 
@@ -43,6 +44,10 @@ if args.func == 'list-ports':
 elif args.func == 'open':
     device_connection = SerialMonitor(args.port, args.baud)
     invoker = CommandInvoker(device_connection)
+    invoker.registerCommand('rtsOn', rtsOn(device_connection))
+    invoker.registerCommand('rtsOff', rtsOff(device_connection))
+    invoker.registerCommand('dtrOn', dtrOn(device_connection))
+    invoker.registerCommand('dtrOff', dtrOff(device_connection))
     device_connection.open()
     user_input_thread = create_user_input_thread(user_input_queue)
     device_connection_thread = create_device_connection_thread()
@@ -50,7 +55,6 @@ elif args.func == 'open':
         user_input_thread.start()
         device_connection_thread.start()
         while True:
-
             if user_input_queue.empty() is False:
                 user_input = user_input_queue.get()
                 if args.json is True:
