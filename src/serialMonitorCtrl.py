@@ -13,8 +13,10 @@ class SerialMonitor:
         self._dtr = dtr
         self._commands = None
 
+    """
+    Initialize and open new serial port
+    """
     def open(self):
-        """Open serial port"""
         try:
             self._serial = serial.Serial(self._port,
                                          self._baud,
@@ -24,12 +26,19 @@ class SerialMonitor:
             print(f'No device found at port {self._port}')
             raise SystemExit
 
+    """
+    Close the serial port
+    """
     def close(self):
-        """Close serial port"""
         self._serial.close()
 
+    """
+    Read line of data from serial connection
+
+    @return: bytes of the data read
+    @raise SerialException: if no device avialble at selected port
+    """
     def read(self) -> bytes:
-        """Return line from serial"""
         if self.isOpen() is True:
             try:
                 line = self._serial.readline()
@@ -38,30 +47,57 @@ class SerialMonitor:
                 print(f'Connection lost to device at port {self._port}')
                 raise SystemExit
 
+    """
+    Sends bytes to serial
+
+    @param byteToSend: bytes to send to serial
+    """
     def write(self, bytesToSend):
-        """Sends bytes to serial"""
         self._serial.write(bytesToSend.encode('utf-8'))
 
+    """
+    Check if serial is open
+
+    @return: true if port is open, otherwise false
+    """
     def isOpen(self) -> bool:
         return(self._serial.isOpen())
 
+    """
+    Set the Ready to Send (rts) setting
+
+    @param state: the desired state of the setting
+    """
     def setRts(self, state: bool) -> None:
         self._serial.rts = state
 
+    """
+    Set the Data Terminal Ready (dtr) setting
+
+    @param state: the desired state of the setting
+    """
     def setDtr(self, state: bool) -> None:
         self._serial.dtr = state
 
+    """
+    Creates list of available serial ports and devices
+
+    @return: list of dicts, one dict of each device (port, description, id)
+    """
     @staticmethod
     def get_port_list() -> list:
-        """Return list of available serial ports and devices."""
         port_list = []
         for port, desc, hwid in sorted(comports()):
             port_list.append({'port': port, 'desc': desc, 'hwid': hwid})
             # port_list.update({port desc})
         return port_list
 
+    """
+    Convert port list to JSON
+
+    @return: port list as a json object
+    """
     @staticmethod
-    def get_port_list_json():
-        """Return list of available serial ports as JSON"""
+    def get_port_list_json() -> json:
         port_list_json_obj = json.dumps(SerialMonitor.get_port_list())
         return port_list_json_obj

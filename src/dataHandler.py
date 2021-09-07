@@ -2,11 +2,24 @@ import json
 from serialMonitorCtrl import SerialMonitor
 from sys import stdin, stdout
 
+"""
+Read data written to console
+
+@param queue: the queue to store the data in
+"""
+
 
 def read_from_console(queue) -> None:
     ''' Read data from console '''
     data = stdin.buffer.readline()
     queue.put(data)
+
+
+"""
+Write data to console
+
+@param data: bytes or string to write to console
+"""
 
 
 def print_to_console(data: bytes or str):
@@ -17,6 +30,13 @@ def print_to_console(data: bytes or str):
         stdout.buffer.flush()
     elif data is None:
         return
+
+
+"""
+Write data to console in json format
+
+@param data: bytes or string to write to console
+"""
 
 
 def print_to_console_json(data: bytes or str):
@@ -32,18 +52,12 @@ def print_to_console_json(data: bytes or str):
         return
 
 
-def process_external_command(incoming_data: str, ser: SerialMonitor):
-    try:
-        # add input validation
-        # catch errors
-        data_obj = json.loads(incoming_data)
-        if data_obj['cmd'] == 'write':
-            ser.write(data_obj['payload'])
-        elif data_obj['cmd'] == 'close':
-            ser.close()
-            exit()
-    except json.decoder.JSONDecodeError:
-        print("Bad JSON format")
+"""
+Read data from serial service
+
+@param ser: the SerialMonitor object to read from
+@param json: select whether to print data out as json to console
+"""
 
 
 def read_from_device(ser: SerialMonitor, json=False):
