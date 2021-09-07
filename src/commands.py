@@ -47,6 +47,14 @@ class close(Command):
         self._serial.close()
 
 
+class write(Command):
+    def __init__(self, serial: SerialMonitor):
+        self._serial = serial
+
+    def execute(self):
+        self._serial.write()
+
+
 class CommandInvoker:
     def __init__(self, serial: SerialMonitor):
         self._ser = serial
