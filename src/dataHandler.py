@@ -1,4 +1,5 @@
 import json
+from queue import Queue
 from serialMonitorCtrl import SerialMonitor
 from sys import stdin, stdout
 
@@ -13,6 +14,25 @@ def read_from_console(queue) -> None:
     ''' Read data from console '''
     data = stdin.buffer.readline()
     queue.put(data)
+
+
+"""
+Process incoming json data and check for commands
+
+@param incoming_data: data string that should be in json format
+@param payload_queue: queue to store any payload that was sent with the command
+"""
+
+
+def process_incoming_data(incoming_data: str, payload_queue: Queue):
+    try:
+        data_obj = json.loads(incoming_data)
+        if data_obj['cmd']:
+            if('payload' in data_obj):
+                payload_queue.put(data_obj['payload'])
+            return data_obj['cmd']
+    except json.decoder.JSONDecodeError:
+        print("Bad JSON format")
 
 
 """
