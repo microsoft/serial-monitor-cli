@@ -3,7 +3,7 @@ import argparse
 import dataHandler as dataHandler
 import threading
 import queue
-from commands import CommandInvoker, dtrOff, dtrOn, rtsOff, rtsOn
+from commands import close, CommandInvoker, dtrOff, dtrOn, rtsOff, rtsOn, write
 
 
 parser = argparse.ArgumentParser()
@@ -11,19 +11,28 @@ parser = argparse.ArgumentParser()
 subparser = parser.add_subparsers(dest='func')
 
 ports_parser = subparser.add_parser('list-ports',
-                                    help='List all avialble serial ports')
+                                    help='List all available serial ports')
 
 ser_parser = subparser.add_parser('open',
                                   help='Open a new serial connection')
 ser_parser.add_argument('port', type=str,
                         help='The port name to open. '
-                        'Hint: Use list-ports to see avialable ports')
+                        'Hint: Use list-ports to see available ports')
 ser_parser.add_argument('-b', '--baud', type=int, metavar='9600',
                         help='The baud rate for the connection')
 ser_parser.add_argument('-r', '--rtscts', action='store_true',
                         help='Set RTS/CTS to true')
 ser_parser.add_argument('-d', '--dsrdtr', action='store_true',
                         help='Set DSR/DTR to true')
+ser_parser.add_argument('-e',
+                        '--eol',
+                        choices=["nl", "cr", "crnl", 'none'],
+                        const='nl',
+                        nargs='?',
+                        default='nl',
+                        help='Line ending character on out going message\
+                            choose from newline [nl], carriage return [cr],\
+                            both [crnl], or none [none]')
 ser_parser.add_argument('-j', '--json', action='store_true',
                         help='Set input and output to json mode')
 
@@ -47,6 +56,7 @@ def create_device_connection_thread() -> threading.Thread:
 
 
 user_input_queue = queue.Queue()
+input_payload_queue = queue.Queue()
 
 
 if args.func == 'list-ports':
@@ -54,6 +64,8 @@ if args.func == 'list-ports':
 elif args.func == 'open':
     device_connection = SerialMonitor(args.port,
                                       args.baud,
+                                      input_payload_queue,
+                                      args.eol,
                                       args.rtscts,
                                       args.dsrdtr)
     invoker = CommandInvoker(device_connection)
@@ -61,6 +73,8 @@ elif args.func == 'open':
     invoker.registerCommand('rtsOff', rtsOff(device_connection))
     invoker.registerCommand('dtrOn', dtrOn(device_connection))
     invoker.registerCommand('dtrOff', dtrOff(device_connection))
+    invoker.registerCommand('close', close(device_connection))
+    invoker.registerCommand('write', write(device_connection))
     device_connection.open()
     user_input_thread = create_user_input_thread(user_input_queue)
     device_connection_thread = create_device_connection_thread()
@@ -72,9 +86,12 @@ elif args.func == 'open':
                 user_input = user_input_queue.get()
                 if args.json is True:
                     decoded_input = user_input.decode('utf-8').strip()
-                    invoker.process_external_command(decoded_input)
-                    # dataHandler.process_external_command(decoded_input,
-                    #                                      device_connection)
+                    command = dataHandler.process_incoming_data(decoded_input,
+                                                                input_payload_queue)  # noqa: E501
+                    if (command):
+                        invoker.set_command(command)
+                        invoker.executeCommand()
+
                 else:
                     dataHandler.print_to_console(user_input)
 

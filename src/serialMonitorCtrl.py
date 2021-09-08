@@ -4,14 +4,28 @@ from serial.tools.list_ports import comports
 import json
 
 
+line_endings = {'nl': '\n',
+                'cr': '\r',
+                'crnl': '\r\n',
+                'none': None}
+
+
 class SerialMonitor:
 
-    def __init__(self, port, baud, rts=False, dtr=True):
+    def __init__(self,
+                 port,
+                 baud,
+                 input_payload_queue,
+                 eol,
+                 rts=False,
+                 dtr=True):
         self._port = port
         self._baud = baud
         self._rts = rts
         self._dtr = dtr
+        self._input_payload_queue = input_payload_queue
         self._commands = None
+        self._endOfLine = line_endings[eol]
 
     """
     Initialize and open new serial port
@@ -27,33 +41,34 @@ class SerialMonitor:
             raise SystemExit
 
     """
-    Close the serial port
+    Close the serial port and exit program
     """
     def close(self):
         self._serial.close()
+        exit()
 
     """
     Read line of data from serial connection
 
     @return: bytes of the data read
-    @raise SerialException: if no device avialble at selected port
+    @raise SerialException: if no device available at selected port
     """
     def read(self) -> bytes:
         if self.isOpen() is True:
             try:
                 line = self._serial.readline()
                 return line
-            except SerialException:
-                print(f'Connection lost to device at port {self._port}')
+            except (SerialException, TypeError, AttributeError):
+                print(f'Connection closed to device at port {self._port}')
                 raise SystemExit
 
     """
     Sends bytes to serial
-
-    @param byteToSend: bytes to send to serial
     """
-    def write(self, bytesToSend):
+    def write(self):
+        bytesToSend = self._input_payload_queue.get() + self._endOfLine
         self._serial.write(bytesToSend.encode('utf-8'))
+        self._serial.flush()
 
     """
     Check if serial is open
@@ -89,7 +104,6 @@ class SerialMonitor:
         port_list = []
         for port, desc, hwid in sorted(comports()):
             port_list.append({'port': port, 'desc': desc, 'hwid': hwid})
-            # port_list.update({port desc})
         return port_list
 
     """
