@@ -4,7 +4,7 @@ import dataHandler as dataHandler
 import threading
 import queue
 from commands import close, CommandInvoker, dtrOff, dtrOn, rtsOff, rtsOn, write
-
+from time import sleep
 
 parser = argparse.ArgumentParser()
 
@@ -82,6 +82,7 @@ elif args.func == 'open':
         user_input_thread.start()
         device_connection_thread.start()
         while True:
+            sleep(0.001)
             if user_input_queue.empty() is False:
                 user_input = user_input_queue.get()
                 if args.json is True:
