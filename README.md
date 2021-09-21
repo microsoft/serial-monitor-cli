@@ -1,10 +1,13 @@
 # Serial Monitor Cli
 
-As the maintainer of this project, please make a few updates:
+## Sending JSON commands
 
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+To send commands to the serial device you will write them to the console. The CLI expects command in the format below:
+
+{"cmd": "write", "payload": "hello world"}
+{"cmd": "close"}
+
+The payload field is only required for the write command.
 
 ## Contributing
 
