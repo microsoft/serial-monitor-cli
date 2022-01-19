@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - v*
+  workflow_dispatch:
 
 jobs:
   build:
@@ -19,7 +20,6 @@ jobs:
           - os: windows-latest
             asset_name: win32.zip
     environment: build
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
     steps:
     - name: echo matrix
       run: echo "${{ matrix.os }}"
@@ -50,8 +50,14 @@ jobs:
       run: |
         pyinstaller src/main.py --onedir
         python -c "import shutil; shutil.make_archive('dist/main', 'zip', 'dist/main')"
+    - name: Upload executable as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.asset_name }}
+        path: ${{ github.workspace }}/dist/main.zip
     - name: upload executable to github tag
       uses: svenstaro/upload-release-action@v2
+      if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
       with:
         repo_token: ${{ secrets.OAUTH_TOKEN }}
         file: ${{ github.workspace }}/dist/main.zip
