@@ -56,8 +56,7 @@ class SerialMonitor:
     def read(self) -> bytes:
         if self.isOpen() is True:
             try:
-                line = self._serial.readline()
-                return line
+                return self._serial.read_all()
             except (SerialException, TypeError, AttributeError):
                 print(f'Connection closed to device at port {self._port}')
                 raise SystemExit

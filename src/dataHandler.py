@@ -61,7 +61,7 @@ Write data to console in json format
 
 def print_to_console_json(data: bytes or str):
     if type(data) is bytes:
-        data = data.decode('utf-8').strip()
+        data = data.decode('utf-8')
     if data:
         output = {'payload': data}
         json_output = json.dumps(output)
