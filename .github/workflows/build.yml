@@ -24,7 +24,6 @@ jobs:
     env:
       PYTHON_VERSION: ${{ matrix.PYTHON_VERSION }}
       MACOSX_DEPLOYMENT_TARGET: ${{ matrix.MACOSX_DEPLOYMENT_TARGET }}
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
     steps:
     - name: echo matrix
       run: echo "${{ matrix.os }}"
