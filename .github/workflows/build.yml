@@ -44,7 +44,7 @@ jobs:
       if: ${{ matrix.os == 'macos-latest' }}
       run: |
         curl https://www.python.org/ftp/python/${{ matrix.PYTHON_VERSION }}/python-${{ matrix.PYTHON_VERSION }}-macosx10.9.pkg -o "python.pkg"
-        sudo installer -pgk python.pkg -target /
+        sudo installer -pkg python.pkg -target /
     - name: Install dependencies
       run: |
         python3 -m pip install --upgrade pip
