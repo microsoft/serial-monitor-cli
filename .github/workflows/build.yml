@@ -62,7 +62,8 @@ jobs:
     - name: Build
       run: |
         pyinstaller src/main.py --onedir
-        python3 -c "import os; import sys; if sys.platform != 'win32': os.rename('dist/main/main', 'dist/main/main.out')"
+        python3 -c "import os; import sys
+        if sys.platform != 'win32': os.rename('dist/main/main', 'dist/main/main.out')"
         python3 -c "import shutil; shutil.make_archive('dist/main', 'zip', 'dist/main')"
     - name: Upload executable as artifact
       uses: actions/upload-artifact@v2
