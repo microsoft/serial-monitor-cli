@@ -46,7 +46,7 @@ jobs:
       # of python directly.
       run: |
         curl https://www.python.org/ftp/python/${{ matrix.PYTHON_VERSION }}/python-${{ matrix.PYTHON_VERSION }}-macosx10.9.pkg -o "python.pkg"
-        echo "f250701d8c02f434a2ae33ef7cc8cec413b9c9dc7d5f62c411451665e0c38140 python.pkg" | shasum -c
+        echo "f250701d8c02f434a2ae33ef7cc8cec413b9c9dc7d5f62c411451665e0c38140  python.pkg" | shasum -c
         sudo installer -pkg python.pkg -target /
         echo "/Library/Frameworks/Python.framework/Versions/3.9/bin" >> $GITHUB_PATH
     - name: Install dependencies
