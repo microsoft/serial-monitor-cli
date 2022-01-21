@@ -36,14 +36,17 @@ jobs:
         architecture: 'x86'
     - name: Set up Python 3.8 x64
       uses: actions/setup-python@v2
-      if: ${{ matrix.os == 'ubuntu-latest' }}
+      if: matrix.os == 'ubuntu-latest'
       with:
         python-version: 3.8
         architecture: 'x64'
     - name: Set up Python for macOS
-      if: ${{ matrix.os == 'macos-latest' }}
+      if: matrix.os == 'macos-latest'
+      # We don't use actions/setup-python to allow for use on older versions of mac. To do this, install the necessary versions
+      # of python directly.
       run: |
         curl https://www.python.org/ftp/python/${{ matrix.PYTHON_VERSION }}/python-${{ matrix.PYTHON_VERSION }}-macosx10.9.pkg -o "python.pkg"
+        echo "a250701d8c02f434a2ae33ef7cc8cec413b9c9dc7d5f62c411451665e0c38140 python.pkg" | shasum -c
         sudo installer -pkg python.pkg -target /
         echo "/Library/Frameworks/Python.framework/Versions/3.9/bin" >> $GITHUB_PATH
     - name: Install dependencies
