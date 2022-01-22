@@ -67,7 +67,7 @@ def print_to_console_json(data: bytes or str, timestamp=""):
         data = data.decode('utf-8').strip()
     if data:
         timestamp = datetime.now().strftime(timestamp)
-        output = {'payload': data, 'timestamp': timestamp}
+        output = {'payload': f"{timestamp}{data}"}
         json_output = json.dumps(output)
         encoded_output = json_output.encode('utf-8')
         stdout.buffer.write(encoded_output)
