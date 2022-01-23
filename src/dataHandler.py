@@ -43,11 +43,11 @@ Write data to console
 """
 
 
-def print_to_console(data: bytes or str, timestamp=""):
+def print_to_console(data: bytes or str, timestamp_format=""):
     if type(data) is str:
         data = data.encode('utf-8')
     if data:
-        timestamp = datetime.now().strftime(timestamp).encode('utf-8')
+        timestamp = datetime.now().strftime(timestamp_format).encode('utf-8')
         stdout.buffer.write(timestamp)
         stdout.buffer.write(data)
         stdout.buffer.flush()
@@ -62,11 +62,11 @@ Write data to console in json format
 """
 
 
-def print_to_console_json(data: bytes or str, timestamp=""):
+def print_to_console_json(data: bytes or str, timestamp_format=""):
     if type(data) is bytes:
         data = data.decode('utf-8').strip()
     if data:
-        timestamp = datetime.now().strftime(timestamp)
+        timestamp = datetime.now().strftime(timestamp_format)
         output = {'payload': f"{timestamp}{data}"}
         json_output = json.dumps(output)
         encoded_output = json_output.encode('utf-8')
@@ -87,8 +87,8 @@ Read data from serial service
 def read_from_device(ser: SerialMonitor, json=False):
     while ser.isOpen():
         line = ser.read()
-        timestamp = ser.get_timestamp_format()
+        timestamp_format = ser.get_timestamp_format()
         if json:
-            print_to_console_json(line, timestamp)
+            print_to_console_json(line, timestamp_format)
         else:
-            print_to_console(line, timestamp)
+            print_to_console(line, timestamp_format)

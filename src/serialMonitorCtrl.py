@@ -19,7 +19,7 @@ class SerialMonitor:
                  eol,
                  rts=False,
                  dtr=True,
-                 timestamp=''):
+                 timestamp_format=''):
         self._port = port
         self._baud = baud
         self._rts = rts
@@ -27,7 +27,7 @@ class SerialMonitor:
         self._input_payload_queue = input_payload_queue
         self._commands = None
         self._endOfLine = line_endings[eol]
-        self._timestamp = timestamp
+        self._timestamp_format = timestamp_format
 
     """
     Initialize and open new serial port
@@ -102,7 +102,7 @@ class SerialMonitor:
     @return: timestamp format
     """
     def get_timestamp_format(self) -> str:
-        return self._timestamp
+        return self._timestamp_format
 
     """
     Creates list of available serial ports and devices
