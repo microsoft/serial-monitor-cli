@@ -35,6 +35,10 @@ ser_parser.add_argument('-e',
                             both [crnl], or none [none]')
 ser_parser.add_argument('-j', '--json', action='store_true',
                         help='Set input and output to json mode')
+ser_parser.add_argument('-t', '--timestamp', type=str,
+                        metavar='"%H:%M:%S.%f -> "', default='',
+                        help='Format of timestamp added before each line.\
+                        List of all possible formats: https://strftime.org')
 
 args = parser.parse_args()
 
@@ -67,7 +71,8 @@ elif args.func == 'open':
                                       input_payload_queue,
                                       args.eol,
                                       args.rtscts,
-                                      args.dsrdtr)
+                                      args.dsrdtr,
+                                      args.timestamp)
     invoker = CommandInvoker(device_connection)
     invoker.registerCommand('rtsOn', rtsOn(device_connection))
     invoker.registerCommand('rtsOff', rtsOff(device_connection))

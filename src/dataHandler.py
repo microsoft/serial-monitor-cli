@@ -2,6 +2,7 @@ import json
 from queue import Queue
 from serialMonitorCtrl import SerialMonitor
 from sys import stdin, stdout
+from datetime import datetime
 
 """
 Read data written to console
@@ -42,10 +43,12 @@ Write data to console
 """
 
 
-def print_to_console(data: bytes or str):
+def print_to_console(data: bytes or str, timestamp_format=""):
     if type(data) is str:
         data = data.encode('utf-8')
     if data:
+        timestamp = datetime.now().strftime(timestamp_format).encode('utf-8')
+        stdout.buffer.write(timestamp)
         stdout.buffer.write(data)
         stdout.buffer.flush()
     elif data is None:
@@ -59,11 +62,12 @@ Write data to console in json format
 """
 
 
-def print_to_console_json(data: bytes or str):
+def print_to_console_json(data: bytes or str, timestamp_format=""):
     if type(data) is bytes:
         data = data.decode('utf-8').strip()
     if data:
-        output = {'payload': data}
+        timestamp = datetime.now().strftime(timestamp_format)
+        output = {'payload': data, 'timestamp': timestamp}
         json_output = json.dumps(output)
         encoded_output = json_output.encode('utf-8')
         stdout.buffer.write(encoded_output)
@@ -83,7 +87,8 @@ Read data from serial service
 def read_from_device(ser: SerialMonitor, json=False):
     while ser.isOpen():
         line = ser.read()
+        timestamp_format = ser.get_timestamp_format()
         if json:
-            print_to_console_json(line)
+            print_to_console_json(line, timestamp_format)
         else:
-            print_to_console(line)
+            print_to_console(line, timestamp_format)
