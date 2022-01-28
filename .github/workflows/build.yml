@@ -20,7 +20,6 @@ jobs:
             MACOSX_DEPLOYMENT_TARGET: 10.9
           - os: windows-latest
             asset_name: win32.zip
-    environment: build
     env:
       PYTHON_VERSION: ${{ matrix.PYTHON_VERSION }}
       MACOSX_DEPLOYMENT_TARGET: ${{ matrix.MACOSX_DEPLOYMENT_TARGET }}
@@ -74,7 +73,7 @@ jobs:
       uses: svenstaro/upload-release-action@v2
       if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
       with:
-        repo_token: ${{ secrets.OAUTH_TOKEN }}
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: ${{ github.workspace }}/dist/main.zip
         asset_name: ${{ matrix.asset_name }}
         tag: ${{ github.ref }}
