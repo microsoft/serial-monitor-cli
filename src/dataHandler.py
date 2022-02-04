@@ -1,4 +1,3 @@
-from distutils.log import error
 import json
 from queue import Queue
 from serialMonitorCtrl import SerialMonitor
