@@ -64,7 +64,7 @@ Write data to console in json format
 
 def print_to_console_json(data: bytes or str, timestamp_format=""):
     if type(data) is bytes:
-        data = data.decode('utf-8')
+        data = data.decode('utf-8', errors='replace')
     if data:
         timestamp = datetime.now().strftime(timestamp_format)
         output = {'payload': data, 'timestamp': timestamp}
